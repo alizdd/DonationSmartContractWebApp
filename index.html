@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Web 3 Demo</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+    <script src='node_modules/web3/dist/web3.min.js'></script>
+</head>
+
+<body>
+
+    Web 3 Demo
+    <br >
+    <button onclick="getString();">Get String</button>
+    <button onclick="setString();">Set String</button>
+    <br /><br />
+    Status: <span id="status">Loading...</span>
+
+    <script type="text/javascript">
+        async function loadWeb3() {
+            if (window.ethereum) {
+                window.web3 = new Web3('HTTP://127.0.0.1:7545');
+                window.ethereum.enable();
+            }
+        }
+
+        async function loadContract() {
+            return await new window.web3.eth.Contract([
+                {
+                "inputs": [],
+                "stateMutability": "nonpayable",
+                "type": "constructor"
+                },
+                {
+                "inputs": [],
+                "name": "get",
+                "outputs": [
+                    {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+                },
+                {
+                "inputs": [
+                    {
+                    "internalType": "string",
+                    "name": "_value",
+                    "type": "string"
+                    }
+                ],
+                "name": "set",
+                "outputs": [
+                    {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                    }
+                ],
+                "stateMutability": "nonpayable",
+                "type": "function"
+                },
+                {
+                "inputs": [
+                    {
+                    "internalType": "string",
+                    "name": "organizationName",
+                    "type": "string"
+                    },
+                    {
+                    "internalType": "enum MyContract.OrganizationType[]",
+                    "name": "organizationTypes",
+                    "type": "uint8[]"
+                    }
+                ],
+                "name": "addAddress",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+                },
+                {
+                "inputs": [],
+                "name": "getAddress",
+                "outputs": [
+                    {
+                    "components": [
+                        {
+                        "internalType": "string",
+                        "name": "text",
+                        "type": "string"
+                        },
+                        {
+                        "internalType": "address payable",
+                        "name": "walletAddress",
+                        "type": "address"
+                        },
+                        {
+                        "internalType": "enum MyContract.OrganizationType[]",
+                        "name": "organizationTypes",
+                        "type": "uint8[]"
+                        }
+                    ],
+                    "internalType": "struct MyContract.testStruct",
+                    "name": "",
+                    "type": "tuple"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+                }
+            ], '0x29fB12Da456C7867c979E2dC64D123143182DF90');
+        }
+
+        async function getString() {
+            updateStatus('fetching Cool Number...');
+            const coolNumber = await window.contract.methods.get().call();
+            updateStatus(`string değerim: ${coolNumber}`);
+        }
+
+        async function getCurrentAccount() {
+            //console.log(await window.web3.givenProvider.selectedAddress);
+            //const accounts = await window.web3.eth.getAccounts();
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            console.log(accounts);
+            const account = accounts[0];
+            return accounts[0];
+        }
+
+        async function setString() {
+            const value = Math.floor(Math.random() * 100);
+            updateStatus(`Updating coolNumber with ${value}`);
+            const account = await getCurrentAccount();
+            const coolNumber = await window.contract.methods.set(value.toString()).send({ from: account });
+            updateStatus('Updated.');
+        }
+
+        async function load() {
+            await loadWeb3();
+            window.contract = await loadContract();
+            console.log(window.contract);
+
+            updateStatus('Ready!');
+        }
+
+        function updateStatus(status) {
+            const statusEl = document.getElementById('status');
+            statusEl.innerHTML = status;
+            console.log(status);
+        }
+
+        load();
+    </script>
+</body>
+
+</html>
