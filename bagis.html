@@ -10,17 +10,28 @@
     <script src='node_modules/web3/dist/web3.min.js'></script>
     <script src='node_modules/bootstrap/dist/js/bootstrap.min.js'></script>
     <script src='node_modules/jquery/dist/jquery.min.js'></script>
+    <script src='abi.js'></script>
     <link rel='node_modules/bootstrap/dist/css/bootstrap.min.css'></link>
+    <style>
+      body {
+        font-family: Helvetica, sans-serif;
+      }
+      </style>
 </head>
 
 <body>
-
-    Web 3 Demo
-    <br >
-    <button onclick="getAddress();">Get String</button>
-    <button onclick="addNewOrganization();">Set String</button>
-    <br /><br />
-    Status: <span id="status">Loading...</span>
+    <div class="container">
+      <div class="row">
+        Web 3 Demo
+        <br >
+        <button type="button" class="btn btn-info" onclick="getAddress();">Get address</button>
+        <button onclick="addNewOrganization();">Add new address</button>
+        <button onclick="GetAddresses();">Get addresses</button>
+        <br /><br />
+        Status: <span id="status">Loading...</span>
+      </div>
+    </div>
+    
 
     <script type="text/javascript">
         async function loadWeb3() {
@@ -31,288 +42,14 @@
         }
 
         async function loadContract() {
-            return await new window.web3.eth.Contract([
-    {
-      "inputs": [
-        {
-          "internalType": "address[]",
-          "name": "addresses_",
-          "type": "address[]"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "_managerAddress",
-          "type": "address"
-        }
-      ],
-      "name": "AddManager",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "_manager",
-          "type": "address"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "_validatedAddress",
-          "type": "address"
-        }
-      ],
-      "name": "AddressValidation",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "_donor",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "_value",
-          "type": "uint256"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "_destinationAddress",
-          "type": "address"
-        }
-      ],
-      "name": "Donation",
-      "type": "event"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "organizationName",
-          "type": "string"
-        },
-        {
-          "internalType": "enum KriptoBagis.OrganizationType[]",
-          "name": "organizationTypes",
-          "type": "uint8[]"
-        }
-      ],
-      "name": "addNewOrganization",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "getAddresses",
-      "outputs": [
-        {
-          "internalType": "address payable[]",
-          "name": "",
-          "type": "address[]"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "getAddress",
-      "outputs": [
-        {
-          "components": [
-            {
-              "internalType": "address payable",
-              "name": "organizationAddress",
-              "type": "address"
-            },
-            {
-              "internalType": "string",
-              "name": "organizationName",
-              "type": "string"
-            },
-            {
-              "internalType": "enum KriptoBagis.OrganizationType[]",
-              "name": "organizationTypes",
-              "type": "uint8[]"
-            },
-            {
-              "internalType": "bool",
-              "name": "isValidated",
-              "type": "bool"
-            }
-          ],
-          "internalType": "struct KriptoBagis.Organization",
-          "name": "",
-          "type": "tuple"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address payable",
-          "name": "charityAddress",
-          "type": "address"
-        }
-      ],
-      "name": "getAddressInfos",
-      "outputs": [
-        {
-          "internalType": "address payable",
-          "name": "",
-          "type": "address"
-        },
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        },
-        {
-          "internalType": "enum KriptoBagis.OrganizationType[]",
-          "name": "",
-          "type": "uint8[]"
-        },
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address payable",
-          "name": "destinationAddress",
-          "type": "address"
-        },
-        {
-          "internalType": "address payable[]",
-          "name": "otherAddresses",
-          "type": "address[]"
-        },
-        {
-          "internalType": "uint256",
-          "name": "mainPercentage",
-          "type": "uint256"
-        }
-      ],
-      "name": "deposit",
-      "outputs": [],
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address payable",
-          "name": "destinationAddress",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "mainPercentage",
-          "type": "uint256"
-        }
-      ],
-      "name": "depositDirect",
-      "outputs": [],
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address payable",
-          "name": "validatingAddress",
-          "type": "address"
-        }
-      ],
-      "name": "validateCharityAddress",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "managerAddress",
-          "type": "address"
-        }
-      ],
-      "name": "addManagerAddress",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "getTotalDonationsAmount",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "getHighestDonation",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address payable",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "destroy",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    }
-  ], '0x68490525123A4B118AE5c5D29D0C78f660035F0B');
+            return await new window.web3.eth.Contract(abi, '0x643bcAA7b0bAaA596fAb7dd3f724835361DfECbf');
         }
 
         async function getAddress() {
-            var inputAddress = "";
             updateStatus('Getting Addres Values...');
-            const coolNumber = await window.contract.methods.getAddress(inputAddress).call();
-            updateStatus(`string değerim: ${coolNumber}`);
+            const account = await getCurrentAccount();
+            var response = await window.contract.methods.getAddress().call({from:account});
+            updateStatus(response);
         }
 
         async function getCurrentAccount() {
@@ -326,17 +63,19 @@
 
         async function addNewOrganization() {
             const name = "Kizilay"
-            updateStatus(`Adding new organization ${value}`);
+            updateStatus(`Adding new organization ${name}`);
             const account = await getCurrentAccount();
-            const coolNumber = await window.contract.methods.addNewOrganization(name, [0, 3, 5]).send({ from: account });
+            const response = await window.contract.methods.addNewOrganization(name, [0, 3, 5]).send({ from: account, gas:3000000 });
+            console.log("response");
+            console.log(response);
             updateStatus('Updated.');
         }
 
         async function load() {
             await loadWeb3();
             window.contract = await loadContract();
+            console.log("window.contract");
             console.log(window.contract);
-
             updateStatus('Ready!');
         }
 
@@ -345,8 +84,24 @@
             statusEl.innerHTML = status;
             console.log(status);
         }
+        async function GetAddresses(){
+          var array = await window.contract.methods.getAddresses().call();
+          console.log("Adresler");
+          console.log(array);
+          return array;
+        }
+
 
         load();
+        $(document).ready(async function(){
+           alert("Merhaba!"); 
+          //  console.log("Adresler");
+          //  var array = await GetAddresses();
+          //  console.log(array);
+
+        });
+
+        
     </script>
 </body>
 
