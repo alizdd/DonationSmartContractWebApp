@@ -333,12 +333,11 @@
         }
 
         async function addNewOrganization(orgName, typeArray) {
-            const name = "Unicef"
-            updateStatus(`Adding new organization ${name}`);
+            updateStatus(`Adding new organization ${orgName}`);
             const account = await getCurrentAccount();
 
             try{
-                const response = await window.contract.methods.addNewOrganization(name, [0, 6, 7]).send({ from: account, gas:3000000 });
+                const response = await window.contract.methods.addNewOrganization(orgName, typeArray).send({ from: account, gas:3000000 });
                 updateStatus('New organization ' + name + ' added!');
                 changeAlert(true);
             }catch(error){
@@ -393,7 +392,7 @@
             updateStatus(`Depositing directly!`);
             const account = await getCurrentAccount();
             const transferAmount = Number(web3.utils.toWei(tAmount.toString(), 'ether'));
-            const response = await window.contract.methods.deposit(mainAddr, otherAddr, 50).send({ from: account, value:transferAmount, gas:3000000 });
+            const response = await window.contract.methods.deposit(mainAddr, otherAddr, percentage).send({ from: account, value:transferAmount, gas:3000000 });
             console.log("Deposit result: ");
             console.log(response);
         }
