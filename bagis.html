@@ -177,7 +177,40 @@
                             </div>
                         </div>
 
-                        <input class="btn btn-success" type="submit" value="Submit">
+                        <div class="row">
+                            <div class="col-12">
+                                <input class="btn btn-success" type="submit" value="Submit">
+
+                                <input class="btn btn-warning" type="button" id="test10" value="Testx10">
+        
+                                <input class="btn btn-warning" type="button" id="test50" value="Testx50">
+        
+                                <input class="btn btn-warning" type="button" id="test100" value="Testx100">
+                            </div>
+                            
+                        </div>
+
+                        <div class="row" style="margin-top: 20px;">
+                            <div class="col-12">
+                                <div id="test_info" style="font-size:20px;">
+
+                                </div>
+                            </div>
+                            
+                            <div class="col-12">
+                                <span id="first_click" style="font-size:medium;">
+
+                                </span>
+    
+                                <span id="timer" style="font-size:medium;">
+    
+                                </span>
+                            </div>
+                            
+
+                        </div>
+
+
                       </form>
 
                 </div>
@@ -187,8 +220,8 @@
 
     </div>
     <script type="text/javascript">
-        
-        
+        var tick = 0;
+        var upperLimitTick = 10;
         $(document).ready(function(){
             var $formAdd=$('#AddNewAddress');
             var $formDeposit=$('#DepositToAddresses');
@@ -214,6 +247,54 @@
                 addNewOrganization(orgName, orgTypes)
             });
 
+            $('#test10').click(function(){//Saniyede 10 bağış testi
+                const date = new Date();
+                $('#test_info').html("10x TEST");
+                $('#first_click').html(date.toLocaleTimeString()+ "----");
+                tick = 0;
+                upperLimitTick = 10;
+                var myVar = setInterval(function(){myTimer(myVar)}, 1000);
+                for(let i=0; i<10; i++){
+                    $formDeposit.submit();
+                    setTimeout(() => {
+                        
+                    }, 100);
+
+                }
+            });
+
+            $('#test50').click(function(){//Saniyede 50 bağış testi
+                const date = new Date();
+                $('#test_info').html("50x TEST");
+                $('#first_click').html(date.toLocaleTimeString() + "----");
+                tick = 0;
+                upperLimitTick = 50;
+                var myVar = setInterval(function(){myTimer(myVar)}, 1000);
+                for(let i=0; i<50; i++){
+                    $formDeposit.submit()
+                    setTimeout(() => {
+                        
+                    }, 25);
+                }
+            });
+
+
+            $('#test100').click(function(){//Saniyede 100 bağış testi
+                const date = new Date();
+                $('#test_info').html("100x TEST");
+                $('#first_click').html(date.toLocaleTimeString() + "----");
+                tick = 0;
+                upperLimitTick = 100;
+                var myVar = setInterval(function(){myTimer(myVar)}, 1000);
+                for(let i=0; i<100; i++){
+                    $formDeposit.submit()
+                    setTimeout(() => {
+                        
+                    }, 10);
+                }
+            });
+
+            
 
             $formDeposit.submit(function(e){
                 e.preventDefault();
@@ -229,7 +310,7 @@
                 var amount = inputValues[2].value;
                 var percentage = inputValues[3].value;
 
-                if(amount < 1){
+                if(amount <= 0){
                     alert("Lütfen geçerli bir tutar giriniz.");
                     return;
                 }
@@ -258,30 +339,10 @@
                 }
 
             })
-            // $('.addr').click(function(){
-            //     console.log("TIKLADIM");
-            //     if($('.addr').hasClass('firstSelect') == false){
-            //         $(this).addClass('firstSelect');
-            //     }
-            //     else{
-            //         if($(this).hasClass('firstSelect')){
-            //             $(this).removeClass('firstSelect');
-            //         }
-            //         else{
-            //             if($(this).hasClass('secondarySelect')){
-            //                 $(this).removeClass('secondarySelect');
-            //             }
-            //             else{
-            //                 $(this).addClass('secondarySelect');
-            //             }
-                        
-            //         }
-            //     }
-            // });
         });
         function selectAddr(e){
             var val = $(e).parents("tr").find(".addr").text();;
-            console.log(val);
+            //console.log(val);
 
             if ($('#mainAddress').val().length == 0 ){
                 $('#mainAddress').val(val.toString());
@@ -290,6 +351,17 @@
                 $('#otherAddresses').val($('#otherAddresses').val() + val + ";");
             }
 
+        }
+
+        function myTimer(myVar) {
+            if(tick < upperLimitTick){
+                const d = new Date();
+                $('#timer').html(d.toLocaleTimeString());
+                console.log("timer",d.toLocaleTimeString());
+            }
+            else{
+                clearInterval(myVar)
+            }
         }
         
     </script>
@@ -395,6 +467,11 @@
             const response = await window.contract.methods.deposit(mainAddr, otherAddr, percentage).send({ from: account, value:transferAmount, gas:3000000 });
             console.log("Deposit result: ");
             console.log(response);
+            if(response.status == true){
+                tick++;
+
+                console.log("TICK", tick);
+            }
         }
 
         
@@ -402,16 +479,16 @@
 
 
         async function GetEvents(){
-            // const typesArray = [{
-            //                 type: 'address',
-            //                 name: '_donor'
-            //             },{
-            //                 type: 'uint256',
-            //                 name: '_value'
-            //             },{
-            //                 type: 'address',
-            //                 name: '_destinationAddress'
-            //             }];
+            const typesArray = [{
+                            type: 'address',
+                            name: '_donor'
+                        },{
+                            type: 'uint256',
+                            name: '_value'
+                        },{
+                            type: 'address',
+                            name: '_destinationAddress'
+                        }];
 
             // const typesArray = {
             //         "_organization": {  
@@ -422,43 +499,43 @@
             //     }
             // };
 
-            const typesArray = [{
-                "components": [
-                {
-                    "internalType": "address payable",
-                    "name": "organizationAddress",
-                    "type": "address"
-                },
-                {
-                    "internalType": "string",
-                    "name": "organizationName",
-                    "type": "string"
-                },
-                {
-                    "internalType": "enum KriptoBagis.OrganizationType[]",
-                    "name": "organizationTypes",
-                    "type": "uint8[]"
-                },
-                {
-                    "internalType": "bool",
-                    "name": "isValidated",
-                    "type": "bool"
-                }
-                ],
-                "indexed": true,
-                "internalType": "struct KriptoBagis.Organization",
-                "name": "_organization",
-                "type": "tuple"
-            }];
+            // const typesArray = [{
+            //     "components": [
+            //     {
+            //         "internalType": "address payable",
+            //         "name": "organizationAddress",
+            //         "type": "address"
+            //     },
+            //     {
+            //         "internalType": "string",
+            //         "name": "organizationName",
+            //         "type": "string"
+            //     },
+            //     {
+            //         "internalType": "enum KriptoBagis.OrganizationType[]",
+            //         "name": "organizationTypes",
+            //         "type": "uint8[]"
+            //     },
+            //     {
+            //         "internalType": "bool",
+            //         "name": "isValidated",
+            //         "type": "bool"
+            //     }
+            //     ],
+            //     "indexed": true,
+            //     "internalType": "struct KriptoBagis.Organization",
+            //     "name": "_organization",
+            //     "type": "tuple"
+            // }];
 
-            var array = await window.contract.getPastEvents('OrganizationAdded',{
+            var array = await window.contract.getPastEvents('Donation',{
                 fromBlock: 0,
                 toBlock: 'latest'
             }, function(error, events){
                 console.log(events);
-                console.log(web3.utils.rightPad(events[0].returnValues._organization, 64));
-                var eventResult = window.web3.eth.abi.decodeParameters(typesArray, web3.utils.rightPad(events[0].returnValues._organization, 64));
-                console.log(eventResult);
+                // console.log(web3.utils.rightPad(events[0].returnValues._organization, 64));
+                // var eventResult = window.web3.eth.abi.decodeParameters(typesArray, web3.utils.rightPad(events[0].returnValues._organization, 64));
+                // console.log(eventResult);
             });
         }
 
