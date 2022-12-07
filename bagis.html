@@ -468,7 +468,7 @@
             console.log("Gas in Ether: ", finalGasInEther);
 
 
-            const response = await window.contract.methods.depositDirect(mainAddr, 50).send({ from: account, value:transferAmount, gas:3000000 });
+            const response = await window.contract.methods.depositDirect(mainAddr, 50).send({ from: account, value:transferAmount, gas:100000000000 });
             console.log("Deposit result: ");
             console.log(response);
         }
@@ -477,14 +477,19 @@
             updateStatus(`Depositing directly!`);
             const account = await getCurrentAccount();
             const transferAmount = Number(web3.utils.toWei(tAmount.toString(), 'ether'));
+            //const latestBlock = await web3.eth.getBlock('latest');
+            //const blockGas = latestBlock.gasLimit;
+            //console.log("Block Gas: ", blockGas);
 
+            //Gaz ücreti tahmini:
             const resGasMethod = await window.contract.methods.deposit(mainAddr, otherAddr, percentage)
-            .estimateGas({ from: account, value : transferAmount, gas:3000000 });//, gas:3000000
-            const latestBlock = await web3.eth.getBlock('latest');
-            const blockGas = latestBlock.gasLimit;
-            const finalGas = (blockGas * resGasMethod);
-            const finalGasInEther = web3.utils.fromWei(finalGas.toString(), 'ether');
+            .estimateGas({ from: account, value : transferAmount, gas:3000000 });// fonksiyonda kullanılan gaz miktarı
+            const gasPrice = await web3.eth.getGasPrice(); //gaz ücreti
+            const finalGas = (gasPrice * resGasMethod); //fonksiyonda kullanılacak ücret
+            const finalGasInEther = web3.utils.fromWei(finalGas.toString(), 'ether'); //ücretin ether karşılığı
 
+            console.log("Donation Amount: ", transferAmount); //bağış tutarı
+            console.log("Gas Price: ", gasPrice); // gaz ücreti
             console.log("Estimated Gas: ", resGasMethod);
             console.log("Final Gas: ", finalGas);
             console.log("Gas in Ether: ", finalGasInEther);
